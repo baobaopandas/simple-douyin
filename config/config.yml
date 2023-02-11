@@ -1,0 +1,16 @@
+jwt:
+  jwt_secret: dousheng
+  expire_time: 3
+
+
+db:
+  db_driver: mysql
+  host: 81.68.118.43
+  port: 3306
+  username: root
+  password: baobao
+  db_name: dousheng
+
+redis:
+  host: 81.68.118.43
+  port: 6379
