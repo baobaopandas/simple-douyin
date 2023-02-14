@@ -24,4 +24,5 @@ type Video struct {
 	FavoriteCount sql.NullInt64 `json:"favorite_count"`
 	CommentCount  sql.NullInt64 `json:"comment_count"`
 	Title         string        `json:"title"`
+	CreatedAt     sql.NullTime  `json:"created_at"`
 }

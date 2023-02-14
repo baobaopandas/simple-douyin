@@ -14,8 +14,7 @@ import (
 func GetConn() *mydb.Queries {
 	dbConfig := config.CONFIG.DbConfig
 	dbDriver := dbConfig.DbDriver
-	fmt.Println(dbDriver)
-	dbSource := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s", dbConfig.Username, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.DbName)
+	dbSource := fmt.Sprintf("%s:%s@tcp(%s:%d)/%s?parseTime=true", dbConfig.Username, dbConfig.Password, dbConfig.Host, dbConfig.Port, dbConfig.DbName)
 
 	conn, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
