@@ -13,7 +13,8 @@ CREATE TABLE `videos` (
   `cover_url` varchar(255) NOT NULL,
   `favorite_count` bigint DEFAULT 0,
   `comment_count` bigint DEFAULT 0, 
-  `title` varchar(255) NOT NULL
+  `title` varchar(255) NOT NULL,
+  `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);

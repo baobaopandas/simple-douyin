@@ -13,7 +13,7 @@ import (
 
 const (
 	dbDriver = "mysql"
-	dbSource = "root:baobao@tcp(81.68.118.43:3306)/dousheng"
+	dbSource = "root:baobao@tcp(81.68.118.43:3306)/dousheng?parseTime=true"
 )
 
 var testQueries *mydb.Queries

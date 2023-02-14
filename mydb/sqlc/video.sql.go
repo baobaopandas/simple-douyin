@@ -45,7 +45,7 @@ func (q *Queries) DeleteVideo(ctx context.Context, videoID int64) error {
 }
 
 const getVideo = `-- name: GetVideo :one
-SELECT video_id, author, play_url, cover_url, favorite_count, comment_count, title FROM videos
+SELECT video_id, author, play_url, cover_url, favorite_count, comment_count, title, created_at FROM videos
 WHERE  video_id = ? LIMIT 1
 `
 
@@ -60,17 +60,18 @@ func (q *Queries) GetVideo(ctx context.Context, videoID int64) (Video, error) {
 		&i.FavoriteCount,
 		&i.CommentCount,
 		&i.Title,
+		&i.CreatedAt,
 	)
 	return i, err
 }
 
-const listVideos = `-- name: ListVideos :many
-SELECT video_id, author, play_url, cover_url, favorite_count, comment_count, title FROM videos
-ORDER BY video_id LIMIT 30
+const getVideoById = `-- name: GetVideoById :many
+SELECT video_id, author, play_url, cover_url, favorite_count, comment_count, title, created_at FROM videos
+WHERE  author = ?
 `
 
-func (q *Queries) ListVideos(ctx context.Context) ([]Video, error) {
-	rows, err := q.db.QueryContext(ctx, listVideos)
+func (q *Queries) GetVideoById(ctx context.Context, author int64) ([]Video, error) {
+	rows, err := q.db.QueryContext(ctx, getVideoById, author)
 	if err != nil {
 		return nil, err
 	}
@@ -86,6 +87,45 @@ func (q *Queries) ListVideos(ctx context.Context) ([]Video, error) {
 			&i.FavoriteCount,
 			&i.CommentCount,
 			&i.Title,
+			&i.CreatedAt,
+		); err != nil {
+			return nil, err
+		}
+		items = append(items, i)
+	}
+	if err := rows.Close(); err != nil {
+		return nil, err
+	}
+	if err := rows.Err(); err != nil {
+		return nil, err
+	}
+	return items, nil
+}
+
+const listVideos = `-- name: ListVideos :many
+SELECT video_id, author, play_url, cover_url, favorite_count, comment_count, title, created_at FROM videos
+WHERE created_at <= ?
+ORDER BY created_at LIMIT 30
+`
+
+func (q *Queries) ListVideos(ctx context.Context, createdAt string) ([]Video, error) {
+	rows, err := q.db.QueryContext(ctx, listVideos, createdAt)
+	if err != nil {
+		return nil, err
+	}
+	defer rows.Close()
+	var items []Video
+	for rows.Next() {
+		var i Video
+		if err := rows.Scan(
+			&i.VideoID,
+			&i.Author,
+			&i.PlayUrl,
+			&i.CoverUrl,
+			&i.FavoriteCount,
+			&i.CommentCount,
+			&i.Title,
+			&i.CreatedAt,
 		); err != nil {
 			return nil, err
 		}
