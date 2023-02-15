@@ -64,8 +64,8 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	play_url := fmt.Sprintf("http://81.68.118.43:8088/video/%s", finalName)
-	cover_url := fmt.Sprintf("http://81.68.118.43:8088/cover/%s", covername)
+	play_url := fmt.Sprintf("http://127.0.0.1:8088/video/%s", finalName)
+	cover_url := fmt.Sprintf("http://127.0.0.1:8088/cover/%s", covername)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,

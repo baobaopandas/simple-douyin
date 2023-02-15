@@ -21,6 +21,8 @@ func GetConn() *mydb.Queries {
 	if err != nil {
 		fmt.Println("cannot connect to db: ", err)
 		return nil
+	} else {
+		fmt.Println("链接成功")
 	}
 	Queries := mydb.New(conn)
 	return Queries

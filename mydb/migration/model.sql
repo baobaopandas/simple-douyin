@@ -16,4 +16,13 @@ CREATE TABLE `videos` (
   `title` varchar(255) NOT NULL
 );
 
+CREATE TABLE `favorite` (
+  `favorite_id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `video_id` bigint NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  FOREIGN KEY (`video_id`) REFERENCES `videos` (`video_id`),
+  `statement`  BOOLEAN NOT NULL
+);
+
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);

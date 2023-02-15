@@ -8,6 +8,13 @@ import (
 	"database/sql"
 )
 
+type Favorite struct {
+	FavoriteID int64 `json:"favorite_id"`
+	UserID     int64 `json:"user_id"`
+	VideoID    int64 `json:"video_id"`
+	Statement  bool  `json:"statement"`
+}
+
 type User struct {
 	UserID        int64         `json:"user_id"`
 	Name          string        `json:"name"`

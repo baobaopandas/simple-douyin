@@ -15,12 +15,12 @@ func TestMessageServer(t *testing.T) {
 	userIdA, _ := getTestUserToken(testUserA, e)
 	userIdB, _ := getTestUserToken(testUserB, e)
 
-	connA, err := net.Dial("tcp", "127.0.0.1:9090")
+	connA, err := net.Dial("tcp", "127.0.0.1:12345")
 	if err != nil {
 		fmt.Printf("Connect server failed: %v\n", err)
 		return
 	}
-	connB, err := net.Dial("tcp", "127.0.0.1:9090")
+	connB, err := net.Dial("tcp", "127.0.0.1:12345")
 	if err != nil {
 		fmt.Printf("Connect server failed: %v\n", err)
 		return
