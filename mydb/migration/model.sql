@@ -18,3 +18,13 @@ CREATE TABLE `videos` (
 );
 
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);
+
+CREATE TABLE `relations` (
+  `follow_id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `followed_id` bigint NOT NULL,
+  `follower_id` bigint NOT NULL,
+  `deleted` tinyint(4) NOT NULL DEFAULT '0'
+);
+
+ALTER TABLE `relations` ADD FOREIGN KEY (`followed_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE `relations` ADD FOREIGN KEY (`follower_id`) REFERENCES `users` (`user_id`);
