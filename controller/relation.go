@@ -37,6 +37,14 @@ func RelationAction(c *gin.Context) {
 		})
 		return
 	}
+	// 禁止自己关注自己
+	if followedId == followerId {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  "cannot follow yourself.",
+		})
+		return
+	}
 	//获取action动作 1-关注，2-取消关注
 	actionType, err := strconv.ParseInt(c.Query("action_type"), 10, 64)
 	if err != nil {
@@ -125,37 +133,27 @@ func FollowList(c *gin.Context) {
 		})
 		return
 	}
-	followerId, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	query := GetConn()
+	_, FollowedList, err := GetIdAndList(query.GetFollowedIdByFollower, c.Query("user_id"))
 	if err != nil {
 		c.JSON(http.StatusOK, UserListResponse{
 			Response: Response{
 				StatusCode: 1,
-				StatusMsg:  "strconv user_id error. " + err.Error(),
-			},
-		})
-		return
-	}
-
-	query := GetConn()
-	FollowedList, err := query.GetFollowedIdByFollower(context.Background(), followerId)
-	if err != nil {
-		c.JSON(http.StatusOK, UserListResponse{
-			Response: Response{
-				StatusCode: 2,
 				StatusMsg:  err.Error(),
 			},
 		})
-		return
 	}
-	if len(FollowedList) == 0 {
-		c.JSON(http.StatusOK, UserListResponse{
-			Response: Response{
-				StatusCode: 0,
-			},
-			UserList: []User{},
-		})
-		return
-	}
+
+	// if len(FollowedList) == 0 {
+	// 	c.JSON(http.StatusOK, UserListResponse{
+	// 		Response: Response{
+	// 			StatusCode: 0,
+	// 		},
+	// 		UserList: []User{},
+	// 	})
+	// 	return
+	// }
+
 	user_list := make([]User, len(FollowedList))
 	for i, followedId := range FollowedList {
 		user, err := query.GetUserById(context.Background(), followedId)
@@ -186,11 +184,54 @@ func FollowList(c *gin.Context) {
 
 // FollowerList all users have same follower list
 func FollowerList(c *gin.Context) {
+	token := c.Query("token")
+	//验证token
+	_, err := util.ParseToken(token)
+	if err != nil {
+		c.JSON(http.StatusOK, UserListResponse{
+			Response: Response{
+				StatusCode: 1,
+				StatusMsg:  err.Error(),
+			},
+		})
+		return
+	}
+	query := GetConn()
+	followedId, FollowerList, err := GetIdAndList(query.GetFollowerIdByFollowed, c.Query("user_id"))
+	if err != nil {
+		c.JSON(http.StatusOK, UserListResponse{
+			Response: Response{
+				StatusCode: 1,
+				StatusMsg:  err.Error(),
+			},
+		})
+	}
+
+	user_list := make([]User, len(FollowerList))
+	for i, followerId := range FollowerList {
+		user, err := query.GetUserById(context.Background(), followerId)
+		if err != nil {
+			c.JSON(http.StatusOK, UserListResponse{
+				Response: Response{
+					StatusCode: 3,
+					StatusMsg:  err.Error(),
+				},
+			})
+			return
+		}
+		user_list[i] = User{
+			Id:            user.UserID,
+			Name:          user.Name,
+			FollowCount:   user.FollowCount.Int64,
+			FollowerCount: user.FollowerCount.Int64,
+			IsFollow:      IsFollowUser(followedId, followerId),
+		}
+	}
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: user_list,
 	})
 }
 
@@ -219,4 +260,18 @@ func IsFollowUser(followerID int64, followedID int64) bool {
 	}
 	//没关注过
 	return false
+}
+
+// 给定字符串形式id和方法，获取id和列表
+func GetIdAndList(queryFunc func(ctx context.Context, ID int64) ([]int64, error), value string) (int64, []int64, error) {
+	Id, err := strconv.ParseInt(value, 10, 64)
+	if err != nil {
+		return -1, nil, err
+	}
+
+	List, err := queryFunc(context.Background(), Id)
+	if err != nil {
+		return Id, nil, err
+	}
+	return Id, List, nil
 }
