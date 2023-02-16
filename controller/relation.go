@@ -237,11 +237,59 @@ func FollowerList(c *gin.Context) {
 
 // FriendList all users have same friend list
 func FriendList(c *gin.Context) {
+	token := c.Query("token")
+	//验证token
+	_, err := util.ParseToken(token)
+	if err != nil {
+		c.JSON(http.StatusOK, UserListResponse{
+			Response: Response{
+				StatusCode: 1,
+				StatusMsg:  err.Error(),
+			},
+		})
+		return
+	}
+	query := GetConn()
+	followerId, FollowedList, err := GetIdAndList(query.GetFollowedIdByFollower, c.Query("user_id"))
+	if err != nil {
+		c.JSON(http.StatusOK, UserListResponse{
+			Response: Response{
+				StatusCode: 1,
+				StatusMsg:  err.Error(),
+			},
+		})
+	}
+
+	user_list := []User{}
+	for _, followedId := range FollowedList {
+		if is_follow := IsFollowUser(followedId, followerId); !is_follow {
+			// followedId未关注followerId， 双方不是好友
+			continue
+		}
+		// 是好友，加入列表
+		user, err := query.GetUserById(context.Background(), followedId)
+		if err != nil {
+			c.JSON(http.StatusOK, UserListResponse{
+				Response: Response{
+					StatusCode: 3,
+					StatusMsg:  err.Error(),
+				},
+			})
+			return
+		}
+		user_list = append(user_list, User{
+			Id:            user.UserID,
+			Name:          user.Name,
+			FollowCount:   user.FollowCount.Int64,
+			FollowerCount: user.FollowerCount.Int64,
+			IsFollow:      true,
+		})
+	}
 	c.JSON(http.StatusOK, UserListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		UserList: []User{DemoUser},
+		UserList: user_list,
 	})
 }
 
