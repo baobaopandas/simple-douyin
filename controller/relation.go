@@ -2,6 +2,7 @@ package controller
 
 import (
 	"context"
+	"database/sql"
 	"net/http"
 	"strconv"
 
@@ -117,13 +118,14 @@ func RelationAction(c *gin.Context) {
 		StatusCode: 0,
 		StatusMsg:  "OK",
 	})
+	go UpdateRelationCount(followerId, followedId, query)
 }
 
 // FollowList all users have same follow list
 func FollowList(c *gin.Context) {
 	token := c.Query("token")
 	//验证token
-	_, err := util.ParseToken(token)
+	claim, err := util.ParseToken(token)
 	if err != nil {
 		c.JSON(http.StatusOK, UserListResponse{
 			Response: Response{
@@ -133,6 +135,8 @@ func FollowList(c *gin.Context) {
 		})
 		return
 	}
+	// 获取查询者id
+	userID := claim.UserId
 	query := GetConn()
 	_, FollowedList, err := GetIdAndList(query.GetFollowedIdByFollower, c.Query("user_id"))
 	if err != nil {
@@ -171,7 +175,7 @@ func FollowList(c *gin.Context) {
 			Name:          user.Name,
 			FollowCount:   user.FollowCount.Int64,
 			FollowerCount: user.FollowerCount.Int64,
-			IsFollow:      true,
+			IsFollow:      IsFollowUser(userID, followedId),
 		}
 	}
 	c.JSON(http.StatusOK, UserListResponse{
@@ -186,7 +190,7 @@ func FollowList(c *gin.Context) {
 func FollowerList(c *gin.Context) {
 	token := c.Query("token")
 	//验证token
-	_, err := util.ParseToken(token)
+	claim, err := util.ParseToken(token)
 	if err != nil {
 		c.JSON(http.StatusOK, UserListResponse{
 			Response: Response{
@@ -196,8 +200,10 @@ func FollowerList(c *gin.Context) {
 		})
 		return
 	}
+	// 获取查询者id
+	userID := claim.UserId
 	query := GetConn()
-	followedId, FollowerList, err := GetIdAndList(query.GetFollowerIdByFollowed, c.Query("user_id"))
+	_, FollowerList, err := GetIdAndList(query.GetFollowerIdByFollowed, c.Query("user_id"))
 	if err != nil {
 		c.JSON(http.StatusOK, UserListResponse{
 			Response: Response{
@@ -224,7 +230,7 @@ func FollowerList(c *gin.Context) {
 			Name:          user.Name,
 			FollowCount:   user.FollowCount.Int64,
 			FollowerCount: user.FollowerCount.Int64,
-			IsFollow:      IsFollowUser(followedId, followerId),
+			IsFollow:      IsFollowUser(userID, followerId),
 		}
 	}
 	c.JSON(http.StatusOK, UserListResponse{
@@ -322,4 +328,27 @@ func GetIdAndList(queryFunc func(ctx context.Context, ID int64) ([]int64, error)
 		return Id, nil, err
 	}
 	return Id, List, nil
+}
+
+// 更新followerID的关注数，更新followedID的粉丝数
+func UpdateRelationCount(followerID int64, followedID int64, query *mydb.Queries) {
+	follow_count, _ := query.GetFollowedCount(context.Background(), followerID)
+	argFollowCount := mydb.UpdateFollowCountParams{
+		FollowCount: sql.NullInt64{
+			Int64: follow_count,
+			Valid: true,
+		},
+		UserID: followerID,
+	}
+	query.UpdateFollowCount(context.Background(), argFollowCount)
+
+	follower_count, _ := query.GetFollowerCount(context.Background(), followedID)
+	argFollowerCount := mydb.UpdateFollowerCountParams{
+		FollowerCount: sql.NullInt64{
+			Int64: follower_count,
+			Valid: true,
+		},
+		UserID: followedID,
+	}
+	query.UpdateFollowerCount(context.Background(), argFollowerCount)
 }
