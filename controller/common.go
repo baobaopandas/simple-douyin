@@ -17,10 +17,10 @@ type Video struct {
 }
 
 type Comment struct {
-	Id         int64  `json:"id,omitempty"`
-	User       User   `json:"user"`
-	Content    string `json:"content,omitempty"`
-	CreateDate string `json:"create_date,omitempty"`
+	Id      int64  `json:"id,omitempty"`
+	User    User   `json:"user"`
+	VideoID int64  `json:"video_id"`
+	Content string `json:"content,omitempty"`
 }
 
 type User struct {

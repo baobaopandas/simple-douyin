@@ -18,3 +18,15 @@ CREATE TABLE `videos` (
 );
 
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);
+
+-- comment model
+CREATE TABLE `comments`  (
+    `comment_id` bigint NOT NULL AUTO_INCREMENT,
+    `user_id` bigint NOT NULL,
+    `video_id` bigint NOT NULL,
+    `content` varchar(255) NOT NULL,
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    PRIMARY KEY (`comment_id`),
+    CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `simple_douyin`.`users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `comment_video` FOREIGN KEY (`video_id`) REFERENCES `simple_douyin`.`videos` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
+);

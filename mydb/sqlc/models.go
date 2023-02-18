@@ -26,3 +26,11 @@ type Video struct {
 	Title         string        `json:"title"`
 	CreatedAt     sql.NullTime  `json:"created_at"`
 }
+
+type Comment struct {
+	CommentID int64        `json:"comment_id"`
+	UserID    int64        `json:"user_id"`
+	VideoID   int64        `json:"video_id"`
+	Content   string       `json:"content"`
+	CreatedAt sql.NullTime `json:"created_at"`
+}
