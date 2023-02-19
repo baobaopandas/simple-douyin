@@ -12,20 +12,22 @@ import (
 
 const createComment = `-- name: CreateComment :execresult
 INSERT INTO comments (
-  user_id, video_id, content
+  comment_id, user_id, video_id, content
 ) VALUES (
-  ?, ?, ?
-);
+  ?, ?, ?, ?
+)
 `
 
 type CreateCommentParams struct {
-	UserID  int64  `json:"user_id"`
-	VideoID int64  `json:"video_id"`
-	Content string `json:"content"`
+	CommentID int64  `json:"comment_id"`
+	UserID    int64  `json:"user_id"`
+	VideoID   int64  `json:"video_id"`
+	Content   string `json:"content"`
 }
 
 func (q *Queries) CreateComment(ctx context.Context, arg CreateCommentParams) (sql.Result, error) {
 	return q.db.ExecContext(ctx, createComment,
+		arg.CommentID,
 		arg.UserID,
 		arg.VideoID,
 		arg.Content,
@@ -63,6 +65,7 @@ func (q *Queries) GetComment(ctx context.Context, commentID int64) (Comment, err
 const getCommentsById = `-- name: GetCommentsById :many
 SELECT comment_id, user_id, video_id, content, created_at FROM comments
 WHERE  video_id = ?
+ORDER BY created_at DESC
 `
 
 func (q *Queries) GetCommentsById(ctx context.Context, videoID int64) ([]Comment, error) {
@@ -127,4 +130,32 @@ func (q *Queries) ListComments(ctx context.Context, createdAt string) ([]Comment
 		return nil, err
 	}
 	return items, nil
+}
+
+const maxCommentID = `-- name: MaxCommentID :one
+SELECT max(comment_id) FROM comments
+`
+
+func (q *Queries) MaxCommentID(ctx context.Context) (int64, error) {
+	rows := q.db.QueryRowContext(ctx, maxCommentID)
+
+	var id int64
+	err := rows.Scan(&id)
+
+	return id, err
+
+}
+
+const totalComment = `-- name: TotalComment :one
+SELECT count(comment_id) FROM comments
+WHERE video_id = ?
+`
+
+func (q *Queries) TotalComment(ctx context.Context, video_id int64) (int64, error) {
+	rows := q.db.QueryRowContext(ctx, totalComment, video_id)
+
+	var count int64
+	err := rows.Scan(&count)
+
+	return count, err
 }
