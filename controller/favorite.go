@@ -10,6 +10,7 @@ import (
 	"github.com/RaymondCode/simple-demo/util"
 	"github.com/gin-gonic/gin"
 )
+
 // type UserINFO struct {
 // 	id int64
 // 	name string
@@ -35,14 +36,11 @@ type UserFavoriteResponse struct {
 
 type UserFavoriteListResponse struct {
 	Response
-	Videolist []Video 
+	Videolist []Video
 }
 
 // FavoriteAction no practical effect, just check if token is valid
 func FavoriteAction(c *gin.Context) {
-<<<<<<< HEAD
-	token := c.PostForm("token")
-=======
 	token := c.Query("token")
 	action_type := c.Query("action_type")
 	video := c.Query("video_id")
@@ -61,19 +59,18 @@ func FavoriteAction(c *gin.Context) {
 			Response: Response{StatusCode: 1, StatusMsg: "Get an illegal videoId"},
 		})
 	}
->>>>>>> taotao
 
 	user_id := claim.UserId
 	var queries = GetConn()
 	if action_type == "1" {
 		arg := mydb.GetInfoParams{
-			UserID: user_id,
+			UserID:  user_id,
 			VideoID: video_id,
 		}
 		Info, err := queries.GetInfo(context.Background(), arg)
 		if err != nil {
-			arg := mydb.AddFavoriteParams {
-				UserID: user_id,
+			arg := mydb.AddFavoriteParams{
+				UserID:  user_id,
 				VideoID: video_id,
 			}
 			err := queries.AddFavorite(context.Background(), arg)
@@ -83,8 +80,8 @@ func FavoriteAction(c *gin.Context) {
 				})
 			}
 		} else {
-			arg := mydb.UpdateFavoriteParams {
-				UserID: Info.UserID,
+			arg := mydb.UpdateFavoriteParams{
+				UserID:  Info.UserID,
 				VideoID: Info.VideoID,
 			}
 			err := queries.UpdateFavorite(context.Background(), arg)
@@ -104,8 +101,8 @@ func FavoriteAction(c *gin.Context) {
 			Response: Response{StatusCode: 0, StatusMsg: "Update Successed"},
 		})
 	} else {
-		arg := mydb.GetInfoParams {
-			UserID: user_id,
+		arg := mydb.GetInfoParams{
+			UserID:  user_id,
 			VideoID: video_id,
 		}
 		Info, err := queries.GetInfo(context.Background(), arg)
@@ -114,8 +111,8 @@ func FavoriteAction(c *gin.Context) {
 				Response: Response{StatusCode: 4, StatusMsg: "No relevant record"},
 			})
 		} else {
-			arg := mydb.DeleteFavoriteParams {
-				UserID: Info.UserID,
+			arg := mydb.DeleteFavoriteParams{
+				UserID:  Info.UserID,
 				VideoID: Info.VideoID,
 			}
 			err := queries.DeleteFavorite(context.Background(), arg)
@@ -142,7 +139,7 @@ func FavoriteAction(c *gin.Context) {
 // FavoriteList all users have same favorite video list
 func FavoriteList(c *gin.Context) {
 	token := c.Query("token")
-	User_id, err := strconv.ParseInt(c.Query("user_id") , 10, 64)
+	User_id, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
 	if err != nil {
 		c.JSON(http.StatusOK, UserFavoriteResponse{
 			Response: Response{StatusCode: 1, StatusMsg: "Get an illegal user_id"},
@@ -179,27 +176,27 @@ func FavoriteList(c *gin.Context) {
 				Response: Response{StatusCode: 10, StatusMsg: "Get video_info Failed"},
 			})
 		}
-		INFO := Video {
-			Id: video.VideoID,
-			PlayUrl: video_info.PlayUrl,
-			CoverUrl: video_info.CoverUrl,
+		INFO := Video{
+			Id:            video.VideoID,
+			PlayUrl:       video_info.PlayUrl,
+			CoverUrl:      video_info.CoverUrl,
 			FavoriteCount: video_info.FavoriteCount.Int64,
-			CommentCount: video_info.CommentCount.Int64,
-			IsFavorite: video.Statement,
-			Title: video_info.Title,
+			CommentCount:  video_info.CommentCount.Int64,
+			IsFavorite:    video.Statement,
+			Title:         video_info.Title,
 			Author: User{
-				Id: user_info.UserID,
-				Name: user_info.Name,
-				FollowCount: user_info.FollowCount.Int64,
+				Id:            user_info.UserID,
+				Name:          user_info.Name,
+				FollowCount:   user_info.FollowCount.Int64,
 				FollowerCount: user_info.FollowerCount.Int64,
-				IsFollow: IsFollowUser(user_info.UserID, User_id),
+				IsFollow:      IsFollowUser(user_info.UserID, User_id),
 			},
 		}
 		favoriteVideo = append(favoriteVideo, INFO)
 		fmt.Println(favoriteVideo)
 	}
 	c.JSON(http.StatusOK, UserFavoriteListResponse{
-		Response: Response{StatusCode: 0, StatusMsg: "Get user favorite list"},
+		Response:  Response{StatusCode: 0, StatusMsg: "Get user favorite list"},
 		Videolist: favoriteVideo,
 	})
 }
