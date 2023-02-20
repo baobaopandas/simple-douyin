@@ -2,9 +2,18 @@
 SELECT * FROM videos
 WHERE  video_id = ? LIMIT 1;
 
+-- name: GetVideoById :many
+SELECT * FROM videos
+WHERE  author = ?;
+
+
 -- name: ListVideos :many
 SELECT * FROM videos
-ORDER BY video_id LIMIT 30;
+WHERE created_at <= ?
+ORDER BY created_at LIMIT 30;
+
+
+
 
 -- name: CreateVideo :execresult
 INSERT INTO videos (

@@ -5,6 +5,8 @@ import (
 	"fmt"
 	"net/http"
 	"path/filepath"
+	"strconv"
+	"strings"
 
 	mydb "github.com/RaymondCode/simple-demo/mydb/sqlc"
 	"github.com/RaymondCode/simple-demo/util"
@@ -51,7 +53,9 @@ func Publish(c *gin.Context) {
 		})
 		return
 	}
-	covername := fmt.Sprintf("%d.jpg", user_id)
+	covername := strings.TrimRight(finalName, ".mp4")
+
+	covername = fmt.Sprintf("%s.jpg", covername)
 	saveCover := filepath.Join("./public/cover/", covername)
 
 	err = util.GetFrame(saveFile, saveCover)
@@ -97,10 +101,53 @@ func Publish(c *gin.Context) {
 
 // PublishList all users have same publish video list
 func PublishList(c *gin.Context) {
+	token := c.Query("token")
+	//验证token
+	_, err := util.ParseToken(token)
+	if err != nil {
+		c.JSON(http.StatusOK, Response{
+			StatusCode: 1,
+			StatusMsg:  err.Error(),
+		})
+		return
+	}
+	// self_id := claim.UserId
+	user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
+
+	var video_list = []Video{}
+	query := GetConn()
+	user, _ := query.GetUserById(context.Background(), user_id)
+
+	//判断是否自己是否已关注
+	is_follow := IsFollowUser(user_id, user.UserID)
+
+	author := User{
+		Id:            user.UserID,
+		Name:          user.Name,
+		FollowCount:   user.FollowCount.Int64,
+		FollowerCount: user.FollowerCount.Int64,
+		IsFollow:      is_follow,
+	}
+	//TODO判断是否点赞该视频
+	videos, _ := query.GetVideoById(context.Background(), user_id)
+	for _, video := range videos {
+		var controller_video Video
+		controller_video.Id = video.VideoID
+		controller_video.Author = author
+		controller_video.PlayUrl = video.PlayUrl
+		controller_video.CoverUrl = video.CoverUrl
+		controller_video.FavoriteCount = video.FavoriteCount.Int64
+		controller_video.CommentCount = video.CommentCount.Int64
+		controller_video.IsFavorite = true
+		controller_video.Title = video.Title
+		video_list = append(video_list, controller_video)
+
+	}
+
 	c.JSON(http.StatusOK, VideoListResponse{
 		Response: Response{
 			StatusCode: 0,
 		},
-		VideoList: DemoVideos,
+		VideoList: video_list,
 	})
 }

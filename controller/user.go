@@ -127,9 +127,9 @@ func UserInfo(c *gin.Context) {
 	}
 	// token := c.Query("token")
 
-	user, err := queries.GetUserById(context.Background(), id)
-	//ToDO: 是否关注后面再做
-	var User_return = User{Id: user.UserID, Name: user.Name, FollowCount: user.FollowCount.Int64, FollowerCount: user.FollowerCount.Int64, IsFollow: true}
+	user, _ := queries.GetUserById(context.Background(), id)
+	//是否关注
+	var User_return = User{Id: user.UserID, Name: user.Name, FollowCount: user.FollowCount.Int64, FollowerCount: user.FollowerCount.Int64, IsFollow: IsFollowUser(id, user.UserID)}
 
 	c.JSON(http.StatusOK, UserResponse{
 		Response: Response{StatusCode: 0},

@@ -188,7 +188,7 @@ func FavoriteList(c *gin.Context) {
 				Name: user_info.Name,
 				FollowCount: user_info.FollowCount.Int64,
 				FollowerCount: user_info.FollowerCount.Int64,
-				IsFollow: false,
+				IsFollow: IsFollowUser(user_info.UserID, User_id),
 			},
 		}
 		favoriteVideo = append(favoriteVideo, INFO)
