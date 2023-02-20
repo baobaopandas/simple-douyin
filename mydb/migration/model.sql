@@ -17,7 +17,28 @@ CREATE TABLE `videos` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+<<<<<<< HEAD
 
 
+=======
+CREATE TABLE `favorite` (
+  `favorite_id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `user_id` bigint NOT NULL,
+  `video_id` bigint NOT NULL,
+  FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`),
+  FOREIGN KEY (`video_id`) REFERENCES `videos` (`video_id`),
+  `statement`  BOOLEAN NOT NULL
+);
+>>>>>>> taotao
 
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);
+
+CREATE TABLE `relations` (
+  `follow_id` bigint PRIMARY KEY AUTO_INCREMENT,
+  `followed_id` bigint NOT NULL,
+  `follower_id` bigint NOT NULL,
+  `deleted` tinyint(4) NOT NULL DEFAULT 0,
+);
+
+ALTER TABLE `relations` ADD FOREIGN KEY (`followed_id`) REFERENCES `users` (`user_id`);
+ALTER TABLE `relations` ADD FOREIGN KEY (`follower_id`) REFERENCES `users` (`user_id`);

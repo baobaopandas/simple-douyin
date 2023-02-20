@@ -68,8 +68,8 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	play_url := fmt.Sprintf("http://81.68.118.43:8088/video/%s", finalName)
-	cover_url := fmt.Sprintf("http://81.68.118.43:8088/cover/%s", covername)
+	play_url := fmt.Sprintf("http://127.0.0.1:8088/video/%s", finalName)
+	cover_url := fmt.Sprintf("http://127.0.0.1:8088/cover/%s", covername)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -112,14 +112,15 @@ func PublishList(c *gin.Context) {
 		return
 	}
 	// self_id := claim.UserId
-	user_id, err := strconv.ParseInt(c.Query("user_id"), 10, 64)
+	user_id, _ := strconv.ParseInt(c.Query("user_id"), 10, 64)
 
 	var video_list = []Video{}
 	query := GetConn()
 	user, _ := query.GetUserById(context.Background(), user_id)
 
-	//Todo判断是否自己是否已关注
-	is_follow := true
+	//判断是否自己是否已关注
+	is_follow := IsFollowUser(user_id, user.UserID)
+
 	author := User{
 		Id:            user.UserID,
 		Name:          user.Name,
