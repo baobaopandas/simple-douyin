@@ -9,7 +9,6 @@ import (
 // FavoriteAction no practical effect, just check if token is valid
 func FavoriteAction(c *gin.Context) {
 	token := c.PostForm("token")
-	//校验token令牌
 
 	if _, exist := usersLoginInfo[token]; exist {
 		c.JSON(http.StatusOK, Response{StatusCode: 0})

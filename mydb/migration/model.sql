@@ -17,4 +17,7 @@ CREATE TABLE `videos` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
+
+
+
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);
