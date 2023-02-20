@@ -27,6 +27,26 @@ func (q *Queries) AddFavorite(ctx context.Context, arg AddFavoriteParams) error 
 	return err
 }
 
+const addFavoriteCount = `-- name: AddFavoriteCount :exec
+UPDATE videos SET favorite_count=favorite_count+1
+WHERE video_id = ?
+`
+
+func (q *Queries) AddFavoriteCount(ctx context.Context, videoID int64) error {
+	_, err := q.db.ExecContext(ctx, addFavoriteCount, videoID)
+	return err
+}
+
+const delFavoriteCount = `-- name: DelFavoriteCount :exec
+UPDATE videos SET favorite_count=favorite_count-1
+WHERE video_id = ?
+`
+
+func (q *Queries) DelFavoriteCount(ctx context.Context, videoID int64) error {
+	_, err := q.db.ExecContext(ctx, delFavoriteCount, videoID)
+	return err
+}
+
 const deleteFavorite = `-- name: DeleteFavorite :exec
 UPDATE favorite SET statement = 0
 WHERE user_id = ? AND video_id = ?
@@ -78,7 +98,7 @@ func (q *Queries) GetUserLike(ctx context.Context, userID int64) ([]Favorite, er
 	var items []Favorite
 	for rows.Next() {
 		var i Favorite
- 		if err := rows.Scan(
+		if err := rows.Scan(
 			&i.FavoriteID,
 			&i.UserID,
 			&i.VideoID,

@@ -19,4 +19,12 @@ WHERE user_id = ? AND video_id = ?;
 
 -- name: GetUserLike :many
 SELECT * FROM favorite
-WHERE user_id = ?
+WHERE user_id = ?;
+
+-- name: AddFavoriteCount :exec
+UPDATE videos SET favorite_count=favorite_count+1
+WHERE video_id = ?;
+
+-- name: DelFavoriteCount :exec
+UPDATE videos SET favorite_count=favorite_count-1
+WHERE video_id = ?;
