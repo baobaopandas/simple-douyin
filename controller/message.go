@@ -3,12 +3,13 @@ package controller
 import (
 	"context"
 	"fmt"
-	mydb "github.com/RaymondCode/simple-demo/mydb/sqlc"
-	"github.com/RaymondCode/simple-demo/util"
-	"github.com/gin-gonic/gin"
 	"net/http"
 	"strconv"
 	"time"
+
+	mydb "github.com/RaymondCode/simple-demo/mydb/sqlc"
+	"github.com/RaymondCode/simple-demo/util"
+	"github.com/gin-gonic/gin"
 )
 
 var tempChat = map[string][]Message{}

@@ -34,7 +34,7 @@ func (q *Queries) CreateMessage(ctx context.Context, arg CreateMessageParams) (s
 
 const listMessages = `-- name: ListMessages :many
 SELECT id, to_user_id, from_user_id, content, create_time FROM messages
-WHERE ((from_user_id =? AND to_user_id =?) OR (from_user_id =? AND to_user_id =?)) AND create_time >= ? ORDER BY create_time
+WHERE ((from_user_id =? AND to_user_id =?) OR (from_user_id =? AND to_user_id =?)) AND create_time > ? ORDER BY create_time
 `
 
 type ListMessagesParams struct {
