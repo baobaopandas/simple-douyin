@@ -28,4 +28,7 @@ go build && ./simple-demo
 
 - 相隔较长时间打开app后，token验证失败
 
-重新登陆可解决
+重新登陆可解测试数据写在 demo_data.go 中，用于列表接口的 mock 测试
+
+### 评论模块
+

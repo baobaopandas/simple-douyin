@@ -10,7 +10,7 @@ import (
 
 func TestCreateUser(t *testing.T) {
 	arg := mydb.CreateUserParams{
-		Name:     "baobao",
+		Name:     "testuser",
 		Password: "123456",
 	}
 
