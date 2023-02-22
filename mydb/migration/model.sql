@@ -17,7 +17,7 @@ CREATE TABLE `videos` (
   `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
-<<<<<<< HEAD
+
 CREATE TABLE `favorite` (
   `favorite_id` bigint PRIMARY KEY AUTO_INCREMENT,
   `user_id` bigint NOT NULL,
@@ -28,7 +28,7 @@ CREATE TABLE `favorite` (
 );
 
 
-=======
+
 CREATE TABLE `messages`(
     `id` bigint PRIMARY KEY AUTO_INCREMENT,
     `to_user_id` bigint NOT NULL ,
@@ -39,7 +39,6 @@ CREATE TABLE `messages`(
     `create_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
 );
 
->>>>>>> xiaoQiang
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);
 
 CREATE TABLE `relations` (

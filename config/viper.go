@@ -23,7 +23,7 @@ func Viper() {
 	if err != nil {
 		log.Panic("配置文件读取错误")
 	}
-	log.Println(CONFIG)
+	// log.Println(CONFIG)
 	// 监视配置文件变化
 	viper.WatchConfig()
 	viper.OnConfigChange(func(e fsnotify.Event) {

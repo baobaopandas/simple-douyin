@@ -8,7 +8,6 @@ import (
 	"database/sql"
 )
 
-<<<<<<< HEAD
 type Comment struct {
 	CommentID int64        `json:"comment_id"`
 	UserID    int64        `json:"user_id"`
@@ -29,14 +28,13 @@ type Relation struct {
 	FollowedID int64 `json:"followed_id"`
 	FollowerID int64 `json:"follower_id"`
 	Deleted    int32 `json:"deleted"`
-=======
+}
 type Message struct {
 	ID         int64        `json:"id"`
 	ToUserID   int64        `json:"to_user_id"`
 	FromUserID int64        `json:"from_user_id"`
 	Content    string       `json:"content"`
 	CreateTime sql.NullTime `json:"create_time"`
->>>>>>> xiaoQiang
 }
 
 type User struct {
