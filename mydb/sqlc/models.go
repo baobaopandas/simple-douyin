@@ -30,11 +30,11 @@ type Relation struct {
 	Deleted    int32 `json:"deleted"`
 }
 type Message struct {
-	ID         int64        `json:"id"`
-	ToUserID   int64        `json:"to_user_id"`
-	FromUserID int64        `json:"from_user_id"`
-	Content    string       `json:"content"`
-	CreateTime sql.NullTime `json:"create_time"`
+	ID         int64  `json:"id"`
+	ToUserID   int64  `json:"to_user_id"`
+	FromUserID int64  `json:"from_user_id"`
+	Content    string `json:"content"`
+	CreateTime int64  `json:"create_time"`
 }
 
 type User struct {

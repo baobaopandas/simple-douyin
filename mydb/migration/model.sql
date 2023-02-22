@@ -36,7 +36,7 @@ CREATE TABLE `messages`(
     FOREIGN KEY (`to_user_id`) REFERENCES `users` (`user_id`),
     FOREIGN KEY (`from_user_id`) REFERENCES `users` (`user_id`),
     `content` varchar(255)NOT NULL,
-    `create_time` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `create_time` BIGINT NOT NULL
 );
 
 ALTER TABLE `videos` ADD FOREIGN KEY (`author`) REFERENCES `users` (`user_id`);

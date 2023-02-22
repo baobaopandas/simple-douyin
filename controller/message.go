@@ -2,14 +2,13 @@ package controller
 
 import (
 	"context"
-	"database/sql"
-	"net/http"
-	"strconv"
-	"time"
-
+	"fmt"
 	mydb "github.com/RaymondCode/simple-demo/mydb/sqlc"
 	"github.com/RaymondCode/simple-demo/util"
 	"github.com/gin-gonic/gin"
+	"net/http"
+	"strconv"
+	"time"
 )
 
 var tempChat = map[string][]Message{}
@@ -51,7 +50,7 @@ func MessageAction(c *gin.Context) {
 	formUserId := claim.UserId
 	//根据userId和toUserID存入数据库
 	queries := GetConn()
-	createMessageParams := mydb.CreateMessageParams{formUserId, toUserIdNum, content}
+	createMessageParams := mydb.CreateMessageParams{formUserId, toUserIdNum, content, time.Now().UnixMilli()}
 	//将消息放入数据库
 	_, err = queries.CreateMessage(ctx, createMessageParams)
 	if err != nil {
@@ -93,6 +92,7 @@ func MessageChat(c *gin.Context) {
 	token := c.Query("token")
 	// 校验token令牌
 	claim, err := util.ParseToken(token)
+
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -100,6 +100,7 @@ func MessageChat(c *gin.Context) {
 		})
 		return
 	}
+
 	toUserId := c.Query("to_user_id")
 	//将toUserId转换为数字
 	toUserIdNum, err := strconv.ParseInt(toUserId, 10, 64)
@@ -110,25 +111,17 @@ func MessageChat(c *gin.Context) {
 		})
 		return
 	}
+
 	//得到fromUserId
 	fromUserId := claim.UserId
 	//获取上次聊天时间
 	pre := c.Query("pre_msg_time")
-	preMsgTime, err := time.Parse("2006-01-02 15:04:05", pre)
-	if err != nil {
-		c.JSON(http.StatusOK, Response{
-			StatusCode: 1,
-			StatusMsg:  "错误的时间格式",
-		})
-		return
-	}
-	//将时间转为sql.nulltime类
-	preMsgTimeParm := sql.NullTime{preMsgTime, true}
-
+	preMsgTime, _ := strconv.ParseInt(pre, 10, 64)
 	//查询聊天记录
-	listMessagesParams := mydb.ListMessagesParams{fromUserId, toUserIdNum, toUserIdNum, fromUserId, preMsgTimeParm}
+	listMessagesParams := mydb.ListMessagesParams{fromUserId, toUserIdNum, toUserIdNum, fromUserId, preMsgTime}
 	queries := GetConn()
 	listMessages, err := queries.ListMessages(ctx, listMessagesParams)
+	fmt.Println("========5")
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -137,7 +130,6 @@ func MessageChat(c *gin.Context) {
 		return
 	}
 	//返回聊天记录
-
 	c.JSON(http.StatusOK, ChatResponse{Response: Response{StatusCode: 0}, MessageList: listMessages})
 
 	//if user, exist := usersLoginInfo[token]; exist {

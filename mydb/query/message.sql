@@ -4,5 +4,5 @@ WHERE ((from_user_id =? AND to_user_id =?) OR (from_user_id =? AND to_user_id =?
 
 -- name: CreateMessage :execresult
 INSERT INTO messages(
-    from_user_id,to_user_id,content
-)VALUES (?,?,?);
+    from_user_id,to_user_id,content,create_time
+)VALUES (?,?,?,?);
