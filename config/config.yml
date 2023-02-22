@@ -5,12 +5,16 @@ jwt:
 
 db:
   db_driver: mysql
-  host: 127.0.0.1
+  host: 81.68.118.43
   port: 3306
   username: root
-  password: 1234
-  db_name: tao
+  password: baobao
+  db_name: dousheng
 
 redis:
-  host: 127.0.0.1
+  host: 81.68.118.43
   port: 6379
+
+video:
+  host: 81.68.118.43 
+  port: 8088

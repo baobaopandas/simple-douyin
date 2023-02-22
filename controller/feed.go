@@ -28,9 +28,9 @@ func Feed(c *gin.Context) {
 		temp_time, _ := strconv.ParseInt(latest_time, 10, 64)
 		latest_Time.Time = time.Unix(temp_time, 0)
 	}
-
-	//TODO鉴权外加判断关注和喜爱
+	//鉴权外加判断关注和喜爱
 	token := c.Query("token")
+
 	var is_follow bool
 	var id int64 = -1
 	if token == "" {
@@ -72,7 +72,11 @@ func Feed(c *gin.Context) {
 		controller_video.CoverUrl = video.CoverUrl
 		controller_video.FavoriteCount = video.FavoriteCount.Int64
 		controller_video.CommentCount = video.CommentCount.Int64
-		controller_video.IsFavorite = true
+		if id == -1 {
+			controller_video.IsFavorite = false
+		} else {
+			controller_video.IsFavorite = IsFavoriteVideo(id, video.VideoID)
+		}
 		controller_video.Title = video.Title
 		video_list = append(video_list, controller_video)
 		nexttime = video.CreatedAt.Time

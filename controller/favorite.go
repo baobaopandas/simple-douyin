@@ -200,3 +200,20 @@ func FavoriteList(c *gin.Context) {
 		Videolist: favoriteVideo,
 	})
 }
+
+// 判断是否喜爱该影片
+func IsFavoriteVideo(user_id int64, video_id int64) bool {
+	query := GetConn()
+	arg := mydb.GetInfoParams{
+		UserID:  user_id,
+		VideoID: video_id,
+	}
+	Info, err := query.GetInfo(context.Background(), arg)
+	//检查曾经是否点赞
+	if err == nil {
+		//曾经发生过点赞
+		return Info.Statement
+	}
+	//没关注过
+	return false
+}

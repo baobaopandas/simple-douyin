@@ -19,8 +19,14 @@ type RedisConfig struct {
 	port string `mapstructure:"port"`
 }
 
+type VideoConfig struct {
+	Host string `mapstructure:"host"`
+	Port string `mapstructure:"port"`
+}
+
 type System struct {
 	JWTConfig   *JWTConfig   `mapstructure:"jwt"`
 	DbConfig    *DbConfig    `mapstructure:"db"`
 	RedisConfig *RedisConfig `mapstructure:"redis"`
+	VideoConfig *VideoConfig `mapstructure:"video"`
 }

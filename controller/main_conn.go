@@ -18,10 +18,10 @@ func GetConn() *mydb.Queries {
 
 	conn, err := sql.Open(dbDriver, dbSource)
 	if err != nil {
-		fmt.Println("cannot connect to db: ", err)
+		// fmt.Println("cannot connect to db: ", err)
 		return nil
 	} else {
-		fmt.Println("链接成功")
+		// fmt.Println("链接成功")
 	}
 	Queries := mydb.New(conn)
 	return Queries

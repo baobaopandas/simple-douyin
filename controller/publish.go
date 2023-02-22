@@ -8,6 +8,7 @@ import (
 	"strconv"
 	"strings"
 
+	"github.com/RaymondCode/simple-demo/config"
 	mydb "github.com/RaymondCode/simple-demo/mydb/sqlc"
 	"github.com/RaymondCode/simple-demo/util"
 	"github.com/gin-gonic/gin"
@@ -68,8 +69,8 @@ func Publish(c *gin.Context) {
 		return
 	}
 
-	play_url := fmt.Sprintf("http://127.0.0.1:8088/video/%s", finalName)
-	cover_url := fmt.Sprintf("http://127.0.0.1:8088/cover/%s", covername)
+	play_url := fmt.Sprintf("http://%s:%s/video/%s", config.CONFIG.VideoConfig.Host, config.CONFIG.VideoConfig.Port, finalName)
+	cover_url := fmt.Sprintf("http://%s:%s/cover/%s", config.CONFIG.VideoConfig.Host, config.CONFIG.VideoConfig.Port, covername)
 	if err != nil {
 		c.JSON(http.StatusOK, Response{
 			StatusCode: 1,
@@ -138,7 +139,7 @@ func PublishList(c *gin.Context) {
 		controller_video.CoverUrl = video.CoverUrl
 		controller_video.FavoriteCount = video.FavoriteCount.Int64
 		controller_video.CommentCount = video.CommentCount.Int64
-		controller_video.IsFavorite = true
+		controller_video.IsFavorite = IsFavoriteVideo(user_id, video.VideoID)
 		controller_video.Title = video.Title
 		video_list = append(video_list, controller_video)
 
