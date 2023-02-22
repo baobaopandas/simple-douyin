@@ -19,4 +19,12 @@ DELETE FROM comments
 WHERE comment_id = ?;
 
 -- name: MaxCommentID :one
-SELECT MAX(comment_id) FROM comments
+SELECT MAX(comment_id) FROM comments;
+
+-- name: AddCommentCount :exec
+UPDATE videos SET comment_count=comment_count+1
+WHERE video_id = ?;
+
+-- name: DelCommentCount :exec
+UPDATE videos SET comment_count=comment_count-1
+WHERE video_id = ?;

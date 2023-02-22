@@ -98,13 +98,14 @@ func CreateComment(userID int64, c *gin.Context) {
 	commentID, err := queries.MaxCommentID(context.Background())
 
 	if err != nil {
-		c.JSON(http.StatusOK, CommentActionResponse{
-			Response: Response{
-				StatusCode: 1,
-				StatusMsg:  "Get comment id error",
-			},
-		})
-		return
+		// c.JSON(http.StatusOK, CommentActionResponse{
+		// 	Response: Response{
+		// 		StatusCode: 1,
+		// 		StatusMsg:  "Get comment id error",
+		// 	},
+		// })
+		// return
+		commentID = 0
 	}
 
 	atomic.AddInt64(&commentID, 1)
@@ -131,6 +132,8 @@ func CreateComment(userID int64, c *gin.Context) {
 	comment, _ := queries.GetComment(context.Background(), commentID)
 	user, _ := queries.GetUserById(context.Background(), userID)
 
+	queries.AddCommentCount(context.Background(), videoID)
+
 	c.JSON(http.StatusOK, CommentActionResponse{
 		Response: Response{
 			StatusCode: 0,
@@ -150,6 +153,7 @@ func CreateComment(userID int64, c *gin.Context) {
 }
 
 func DeleteComment(userID int64, c *gin.Context) {
+	videoID, _ := strconv.ParseInt(c.Query("video_id"), 10, 64)
 	commentID, _ := strconv.ParseInt(c.Query("comment_id"), 10, 64)
 
 	var queries = GetConn()
@@ -186,6 +190,7 @@ func DeleteComment(userID int64, c *gin.Context) {
 		})
 		return
 	}
+	queries.DelCommentCount(context.Background(), videoID)
 
 	c.JSON(http.StatusOK, CommentActionResponse{
 		Response: Response{

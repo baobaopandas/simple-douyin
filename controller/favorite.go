@@ -2,7 +2,6 @@ package controller
 
 import (
 	"context"
-	"fmt"
 	"net/http"
 	"strconv"
 
@@ -193,7 +192,7 @@ func FavoriteList(c *gin.Context) {
 			},
 		}
 		favoriteVideo = append(favoriteVideo, INFO)
-		fmt.Println(favoriteVideo)
+		// fmt.Println(favoriteVideo)
 	}
 	c.JSON(http.StatusOK, UserFavoriteListResponse{
 		Response:  Response{StatusCode: 0, StatusMsg: "Get user favorite list"},

@@ -45,8 +45,8 @@ CREATE TABLE `comments`  (
     `user_id` bigint NOT NULL,
     `video_id` bigint NOT NULL,
     `content` varchar(255) NOT NULL,
-    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP
+    `created_at` TIMESTAMP DEFAULT CURRENT_TIMESTAMP,
     PRIMARY KEY (`comment_id`),
-    CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `simple_douyin`.`users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
-    CONSTRAINT `comment_video` FOREIGN KEY (`video_id`) REFERENCES `simple_douyin`.`videos` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
+    CONSTRAINT `comment_user` FOREIGN KEY (`user_id`) REFERENCES `users` (`user_id`) ON DELETE CASCADE ON UPDATE CASCADE,
+    CONSTRAINT `comment_video` FOREIGN KEY (`video_id`) REFERENCES `videos` (`video_id`) ON DELETE CASCADE ON UPDATE CASCADE
 );

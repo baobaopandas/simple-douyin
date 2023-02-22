@@ -159,3 +159,24 @@ func (q *Queries) TotalComment(ctx context.Context, video_id int64) (int64, erro
 
 	return count, err
 }
+
+
+const addCommentCount = `-- name: AddCommentCount :exec
+UPDATE videos SET comment_count=comment_count+1
+WHERE video_id = ?
+`
+
+func (q *Queries) AddCommentCount(ctx context.Context, videoID int64) error {
+	_, err := q.db.ExecContext(ctx, addCommentCount, videoID)
+	return err
+}
+
+const delCommentCount = `-- name: DelCommentCount :exec
+UPDATE videos SET comment_count=comment_count-1
+WHERE video_id = ?
+`
+
+func (q *Queries) DelCommentCount(ctx context.Context, videoID int64) error {
+	_, err := q.db.ExecContext(ctx, delCommentCount, videoID)
+	return err
+}
